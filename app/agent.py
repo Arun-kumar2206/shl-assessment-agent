@@ -235,6 +235,8 @@ class AssessmentAgent:
             expansions.extend(["contact center", "call simulation", "svar spoken english"])
         if "sales" in lowered:
             expansions.extend(["opq mq sales report", "sales transformation"])
+        if "report" in lowered:
+            expansions.extend(["report", "report 2.0", "leadership report"])
         if "safety" in lowered or "dependability" in lowered:
             expansions.extend(["dependability and safety instrument", "safety and dependability"])
         if "hipaa" in lowered or "medical" in lowered:

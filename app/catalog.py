@@ -36,7 +36,7 @@ class CatalogItem:
 
     @property
     def normalized_tokens(self) -> List[str]:
-        parts = [self.name]
+        parts = [self.name, self.description]
         if self.keys:
             parts.append(" ".join(self.keys))
         if self.job_levels:
