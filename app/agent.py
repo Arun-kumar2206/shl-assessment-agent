@@ -230,16 +230,29 @@ class AssessmentAgent:
         lowered = (text or "").lower()
         expansions: List[str] = []
         if "contact center" in lowered or "call center" in lowered:
-            expansions.extend(["customer service", "call simulation", "svar"])
+            expansions.extend(["customer service", "call simulation", "svar spoken english"])
         if "customer service" in lowered:
-            expansions.extend(["contact center", "call simulation", "svar"])
+            expansions.extend(["contact center", "call simulation", "svar spoken english"])
         if "sales" in lowered:
-            expansions.extend(["sales", "customer interaction", "relationship"])
+            expansions.extend(["opq mq sales report", "sales transformation"])
+        if "safety" in lowered or "dependability" in lowered:
+            expansions.extend(["dependability and safety instrument", "safety and dependability"])
+        if "hipaa" in lowered or "medical" in lowered:
+            expansions.extend(["medical terminology", "hipaa security"])
+        if "admin assistant" in lowered or "admin" in lowered:
+            expansions.extend(["ms excel", "ms word", "microsoft word"])
+        if "java" in lowered:
+            expansions.extend(["core java", "spring", "sql", "restful web services"])
+        if "rust" in lowered:
+            expansions.extend(["live coding", "linux programming", "networking and implementation"])
+        if "graduate" in lowered:
+            expansions.extend(["graduate scenarios", "verify interactive"])
+        if "numerical reasoning" in lowered:
+            expansions.extend(["verify interactive numerical reasoning"])
         if "leadership" in lowered or "executive" in lowered:
-            expansions.extend(["opq", "leadership report", "personality"])
-        if "finance" in lowered or "financial" in lowered:
-            expansions.extend(["numerical reasoning", "financial accounting"])
+            expansions.extend(["opq leadership report", "opq32r"])
         return " ".join(dict.fromkeys(expansions))
+
 
     def _build_summary(self, requirements: Dict[str, Any]) -> str:
         role = requirements.get("role", "")

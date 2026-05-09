@@ -2,7 +2,7 @@ import json
 from dataclasses import dataclass
 from typing import Any, Dict, List
 
-from .utils import normalize_text
+from .utils import normalize_text, tokenize
 
 
 @dataclass(frozen=True)
@@ -20,7 +20,7 @@ class CatalogItem:
 
     @property
     def doc_text(self) -> str:
-        parts = [self.name, self.description]
+        parts = [self.name, self.name, self.description]
         if self.job_levels:
             parts.append("Job levels: " + ", ".join(self.job_levels))
         if self.keys:
@@ -30,8 +30,22 @@ class CatalogItem:
         if self.languages:
             parts.append("Languages: " + ", ".join(self.languages))
         if self.test_type:
-            parts.append("Test type: " + self.test_type)
+            label = _TEST_TYPE_LABELS.get(self.test_type, self.test_type)
+            parts.append("Test type: " + label)
         return normalize_text(". ".join(parts))
+
+    @property
+    def normalized_tokens(self) -> List[str]:
+        parts = [self.name]
+        if self.keys:
+            parts.append(" ".join(self.keys))
+        if self.job_levels:
+            parts.append(" ".join(self.job_levels))
+        if self.languages:
+            parts.append(" ".join(self.languages))
+        if self.test_type:
+            parts.append(_TEST_TYPE_LABELS.get(self.test_type, self.test_type))
+        return tokenize(" ".join(parts))
 
 
 def infer_test_type(item: Dict[str, Any]) -> str:
@@ -79,6 +93,17 @@ def infer_test_type(item: Dict[str, Any]) -> str:
     if any(term in text for term in knowledge_terms):
         return "K"
     return ""
+
+
+_TEST_TYPE_LABELS = {
+    "P": "personality behavior",
+    "S": "situational judgment",
+    "K": "knowledge skills",
+    "A": "ability aptitude",
+    "B": "biodata",
+    "C": "competencies",
+    "D": "development",
+}
 
 
 def load_catalog(path: str) -> List[CatalogItem]:
