@@ -20,12 +20,13 @@ COMPARISON_USER = (
 )
 
 RECOMMENDATION_SYSTEM = (
-    "You are an assistant that summarizes SHL assessment recommendations. "
-    "Only refer to the provided assessments."
+    "You summarize SHL assessment recommendations using only the provided assessments. "
+    "Do not add skills, constraints, or claims that are not explicitly in the assessment text."
 )
 
 RECOMMENDATION_USER = (
     "User need summary:\n{summary}\n\n"
     "Assessments:\n{assessments}\n\n"
-    "Write a short response that introduces the shortlist and highlights fit."
+    "Write a short response (3-5 sentences). "
+    "Only mention details that appear in the assessment text above."
 )

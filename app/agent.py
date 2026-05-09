@@ -197,7 +197,7 @@ class AssessmentAgent:
             **state,
             "reply": reply,
             "recommendations": recommendations,
-            "end_of_conversation": False,
+            "end_of_conversation": True,
         }
 
     def _build_query(self, last_user: str, requirements: Dict[str, Any]) -> str:

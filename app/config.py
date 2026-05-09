@@ -1,6 +1,11 @@
 import os
 from dataclasses import dataclass
 
+from dotenv import load_dotenv
+
+
+load_dotenv()
+
 
 @dataclass(frozen=True)
 class Settings:
@@ -16,7 +21,7 @@ class Settings:
 def get_settings() -> Settings:
     return Settings(
         groq_api_key=os.getenv("GROQ_API_KEY", ""),
-        groq_model=os.getenv("GROQ_MODEL", "llama-3.1-70b-versatile"),
+        groq_model=os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
         embedding_model=os.getenv(
             "EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"
         ),

@@ -1,2 +1,31 @@
 .env
-data
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Environments
+.venv/
+venv/
+env/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Local data
+data/
+
+# Editor and OS
+.DS_Store
+.idea/
+.vscode/
+*.log
