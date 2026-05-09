@@ -79,6 +79,9 @@ python scripts/evaluate_samples.py
 
 ## Deployment
 
+The application is deployed and accessible at:
+[SHL Assessment Recommender](https://shl-assessment-agent-production-8b95.up.railway.app/)
+
 The application can be deployed on platforms like Railway. Ensure the following:
 
 - Environment variables are configured in the platform's settings.
