@@ -50,9 +50,11 @@ class HybridRetriever:
             vector_scores[idx] = score
         vector_norm = _min_max_normalize(vector_scores)
 
+        query_lower = (query or "").lower()
         merged: List[ScoredItem] = []
         for idx, item in enumerate(self.items):
             combined = bm25_weight * bm25_norm[idx] + vector_weight * vector_norm[idx]
+            combined += _keyword_boost(query_lower, item)
             merged.append(
                 ScoredItem(
                     item=item,
@@ -74,3 +76,35 @@ def _min_max_normalize(values: np.ndarray) -> np.ndarray:
     if max_val - min_val <= 1e-6:
         return np.zeros_like(values, dtype="float32")
     return (values - min_val) / (max_val - min_val)
+
+
+def _keyword_boost(query_lower: str, item: CatalogItem) -> float:
+    if not query_lower:
+        return 0.0
+    item_name = item.name.lower()
+    item_keys = " ".join(item.keys or []).lower()
+    item_text = f"{item_name} {item_keys}"
+
+    boost = 0.0
+    if item_name and item_name in query_lower:
+        boost += 0.3
+
+    phrase_map = {
+        "opq": "opq",
+        "sjt": "situational",
+        "situational judgement": "situational",
+        "situational judgment": "situational",
+        "numerical reasoning": "numerical",
+        "verbal reasoning": "verbal",
+        "inductive reasoning": "inductive",
+        "deductive reasoning": "deductive",
+        "personality": "personality",
+        "cognitive": "cognitive",
+        "g+": "g+",
+    }
+
+    for phrase, token in phrase_map.items():
+        if phrase in query_lower and token in item_text:
+            boost += 0.08
+
+    return boost

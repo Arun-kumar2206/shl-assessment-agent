@@ -212,7 +212,11 @@ class AssessmentAgent:
     def _build_query(self, messages: List[Dict[str, str]], requirements: Dict[str, Any]) -> str:
         user_turns = [msg.get("content", "") for msg in messages if msg.get("role") == "user"]
         recent_turns = user_turns[-6:] if user_turns else []
-        parts = [" ".join(recent_turns)]
+        recent_text = " ".join(recent_turns)
+        parts = [recent_text]
+        expanded = self._expand_query_terms(recent_text)
+        if expanded:
+            parts.append(expanded)
         for key in ["role", "seniority", "assessment_type", "constraints"]:
             value = requirements.get(key, "")
             if value:
@@ -221,6 +225,21 @@ class AssessmentAgent:
         if skills:
             parts.append("skills: " + ", ".join(skills))
         return normalize_text(" ".join(parts))
+
+    def _expand_query_terms(self, text: str) -> str:
+        lowered = (text or "").lower()
+        expansions: List[str] = []
+        if "contact center" in lowered or "call center" in lowered:
+            expansions.extend(["customer service", "call simulation", "svar"])
+        if "customer service" in lowered:
+            expansions.extend(["contact center", "call simulation", "svar"])
+        if "sales" in lowered:
+            expansions.extend(["sales", "customer interaction", "relationship"])
+        if "leadership" in lowered or "executive" in lowered:
+            expansions.extend(["opq", "leadership report", "personality"])
+        if "finance" in lowered or "financial" in lowered:
+            expansions.extend(["numerical reasoning", "financial accounting"])
+        return " ".join(dict.fromkeys(expansions))
 
     def _build_summary(self, requirements: Dict[str, Any]) -> str:
         role = requirements.get("role", "")
