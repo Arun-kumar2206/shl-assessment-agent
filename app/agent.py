@@ -104,6 +104,15 @@ class AssessmentAgent:
 
     def _analyze(self, state: AgentState) -> AgentState:
         last_user = state.get("last_user", "")
+        if self._is_greeting(last_user):
+            return {
+                **state,
+                "off_topic": False,
+                "comparison": False,
+                "comparison_items": [],
+                "requirements": {},
+                "enough_context": False,
+            }
         off_topic = self._is_off_topic(last_user)
         comparison_items = self._find_comparison_items(last_user)
         comparison = len(comparison_items) >= 2 and self._is_comparison_request(last_user)
@@ -221,31 +230,16 @@ class AssessmentAgent:
         lowered = (text or "").lower()
         expansions: List[str] = []
         if "contact center" in lowered or "call center" in lowered:
-            expansions.extend(["customer service", "call simulation", "svar spoken english"])
+            expansions.extend(["customer service", "call simulation", "svar"])
         if "customer service" in lowered:
-            expansions.extend(["contact center", "call simulation", "svar spoken english"])
+            expansions.extend(["contact center", "call simulation", "svar"])
         if "sales" in lowered:
-            expansions.extend(["opq mq sales report", "sales transformation"])
-        if "report" in lowered:
-            expansions.extend(["report", "report 2.0", "leadership report"])
-        if "safety" in lowered or "dependability" in lowered:
-            expansions.extend(["dependability and safety instrument", "safety and dependability"])
-        if "hipaa" in lowered or "medical" in lowered:
-            expansions.extend(["medical terminology", "hipaa security"])
-        if "admin assistant" in lowered or "admin" in lowered:
-            expansions.extend(["ms excel", "ms word", "microsoft word"])
-        if "java" in lowered:
-            expansions.extend(["core java", "spring", "sql", "restful web services"])
-        if "rust" in lowered:
-            expansions.extend(["live coding", "linux programming", "networking and implementation"])
-        if "graduate" in lowered:
-            expansions.extend(["graduate scenarios", "verify interactive"])
-        if "numerical reasoning" in lowered:
-            expansions.extend(["verify interactive numerical reasoning"])
+            expansions.extend(["sales", "customer interaction", "relationship"])
         if "leadership" in lowered or "executive" in lowered:
-            expansions.extend(["opq leadership report", "opq32r"])
+            expansions.extend(["opq", "leadership report", "personality"])
+        if "finance" in lowered or "financial" in lowered:
+            expansions.extend(["numerical reasoning", "financial accounting"])
         return " ".join(dict.fromkeys(expansions))
-
 
     def _build_summary(self, requirements: Dict[str, Any]) -> str:
         role = requirements.get("role", "")
@@ -328,6 +322,11 @@ class AssessmentAgent:
             "jailbreak",
         ]
         return any(term in lowered for term in blocked_terms)
+
+    def _is_greeting(self, text: str) -> bool:
+        lowered = (text or "").strip().lower()
+        greetings = {"hi", "hello", "hey", "good morning", "good afternoon", "good evening"}
+        return lowered in greetings
 
     def _is_comparison_request(self, text: str) -> bool:
         lowered = (text or "").lower()
