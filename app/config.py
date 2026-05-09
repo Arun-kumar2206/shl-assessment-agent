@@ -23,7 +23,7 @@ def get_settings() -> Settings:
         groq_api_key=os.getenv("GROQ_API_KEY", ""),
         groq_model=os.getenv("GROQ_MODEL", "llama-3.1-8b-instant"),
         embedding_model=os.getenv(
-            "EMBEDDING_MODEL", "sentence-transformers/all-MiniLM-L6-v2"
+            "EMBEDDING_MODEL", "sentence-transformers/paraphrase-MiniLM-L3-v2"
         ),
         bm25_weight=float(os.getenv("BM25_WEIGHT", "0.45")),
         vector_weight=float(os.getenv("VECTOR_WEIGHT", "0.55")),

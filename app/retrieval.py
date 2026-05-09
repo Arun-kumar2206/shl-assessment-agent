@@ -23,9 +23,10 @@ class HybridRetriever:
         self.items = items
         self._tokenized_corpus = [tokenize(item.doc_text) for item in items]
         self._bm25 = BM25Okapi(self._tokenized_corpus)
-        self._embedder = SentenceTransformer(model_name)
-        self._vectors = self._embed_texts([item.doc_text for item in items])
-        self._index = self._build_index(self._vectors)
+        self._model_name = model_name
+        self._embedder: SentenceTransformer | None = None
+        self._vectors: np.ndarray | None = None
+        self._index: faiss.Index | None = None
 
     def _embed_texts(self, texts: List[str]) -> np.ndarray:
         vectors = self._embedder.encode(texts, normalize_embeddings=True)
@@ -36,7 +37,17 @@ class HybridRetriever:
         index.add(vectors)
         return index
 
+    def _ensure_ready(self) -> None:
+        if self._index is not None:
+            return
+        if self._embedder is None:
+            self._embedder = SentenceTransformer(self._model_name)
+        if self._vectors is None:
+            self._vectors = self._embed_texts([item.doc_text for item in self.items])
+        self._index = self._build_index(self._vectors)
+
     def search(self, query: str, top_k: int, bm25_weight: float, vector_weight: float) -> List[ScoredItem]:
+        self._ensure_ready()
         bm25_scores = self._bm25.get_scores(tokenize(query))
         bm25_norm = _min_max_normalize(bm25_scores)
 
