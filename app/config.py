@@ -28,5 +28,5 @@ def get_settings() -> Settings:
         bm25_weight=float(os.getenv("BM25_WEIGHT", "0.45")),
         vector_weight=float(os.getenv("VECTOR_WEIGHT", "0.55")),
         top_k=int(os.getenv("TOP_K", "5")),
-        max_recs=int(os.getenv("MAX_RECS", "10")),
+        max_recs=int(os.getenv("MAX_RECS", "30")),
     )

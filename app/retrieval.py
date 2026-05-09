@@ -41,7 +41,8 @@ class HybridRetriever:
         bm25_norm = _min_max_normalize(bm25_scores)
 
         query_vec = self._embed_texts([query])
-        scores, indices = self._index.search(query_vec, min(top_k * 5, len(self.items)))
+        search_k = min(top_k, len(self.items))
+        scores, indices = self._index.search(query_vec, search_k)
         vector_scores = np.zeros(len(self.items), dtype="float32")
         for score, idx in zip(scores[0], indices[0]):
             if idx < 0:
