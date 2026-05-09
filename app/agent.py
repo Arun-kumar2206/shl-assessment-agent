@@ -104,15 +104,6 @@ class AssessmentAgent:
 
     def _analyze(self, state: AgentState) -> AgentState:
         last_user = state.get("last_user", "")
-        if self._is_greeting(last_user):
-            return {
-                **state,
-                "off_topic": False,
-                "comparison": False,
-                "comparison_items": [],
-                "requirements": {},
-                "enough_context": False,
-            }
         off_topic = self._is_off_topic(last_user)
         comparison_items = self._find_comparison_items(last_user)
         comparison = len(comparison_items) >= 2 and self._is_comparison_request(last_user)
@@ -337,11 +328,6 @@ class AssessmentAgent:
             "jailbreak",
         ]
         return any(term in lowered for term in blocked_terms)
-
-    def _is_greeting(self, text: str) -> bool:
-        lowered = (text or "").strip().lower()
-        greetings = {"hi", "hello", "hey", "good morning", "good afternoon", "good evening"}
-        return lowered in greetings
 
     def _is_comparison_request(self, text: str) -> bool:
         lowered = (text or "").lower()
